@@ -210,7 +210,9 @@ void MyDisplay( void )
     // the predefined constant CLIP_PLANE_DIST to position your near and
     // far planes.
     //***********************************************************************
-    gluPerspective( VERT_FOV, (double)winWidth / winHeight, 50.0, 600.0 );
+    gluPerspective( VERT_FOV, (double)winWidth / winHeight, 
+        (EYE_INIT_DIST - CLIP_PLANE_DIST) + (eyeDistance - EYE_INIT_DIST), 
+        (EYE_INIT_DIST - CLIP_PLANE_DIST) + (eyeDistance - EYE_INIT_DIST) + 2 * CLIP_PLANE_DIST);
 
 
     glMatrixMode( GL_MODELVIEW );
@@ -226,7 +228,8 @@ void MyDisplay( void )
         eyeDistance * cos(eyeLatitude * PI / 180) * sin(eyeLongitude * PI / 180),
         eyeDistance * sin(eyeLatitude * PI / 180),
         eyeDistance * cos(eyeLatitude * PI / 180) * cos(eyeLongitude * PI / 180),
-        0.0, 0.0, 0.0, 0.0, 1.0, 0.0 );
+        0.0, 0.0, 0.0, 
+        0.0, 1.0, 0.0 );
 
     // Set world positions of the two lights.
     glLightfv( GL_LIGHT0, GL_POSITION, light0Position);
