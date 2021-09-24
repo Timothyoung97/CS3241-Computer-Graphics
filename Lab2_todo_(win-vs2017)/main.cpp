@@ -222,8 +222,11 @@ void MyDisplay( void )
     // Modify the following line of code to set up the view transformation.
     // You may use the gluLookAt() function, but you can use other method.
     //***********************************************************************
-    gluLookAt( 0.0, 0.0, eyeDistance, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0 );
-
+    gluLookAt(
+        eyeDistance * cos(eyeLatitude * PI / 180) * sin(eyeLongitude * PI / 180),
+        eyeDistance * sin(eyeLatitude * PI / 180),
+        eyeDistance * cos(eyeLatitude * PI / 180) * cos(eyeLongitude * PI / 180),
+        0.0, 0.0, 0.0, 0.0, 1.0, 0.0 );
 
     // Set world positions of the two lights.
     glLightfv( GL_LIGHT0, GL_POSITION, light0Position);
@@ -300,6 +303,8 @@ void MyTimer( int v )
         //****************************
         // WRITE YOUR CODE HERE.
         //****************************
+        UpdateCars();
+        glutTimerFunc(1000 / DESIRED_FPS, MyTimer, 0);
     }
 }
 
