@@ -50,6 +50,8 @@
 
 #define DESIRED_FPS         60      // Approximate desired number of frames per second.
 
+#define TORUS_SIDES         10      // No. of sides used for torus
+#define TORUS_RINGS         10      // No. of rings used for torus
 
 // Planet's color.
 const GLfloat planetColor[] = { 0.9, 0.6, 0.4 };
@@ -158,28 +160,28 @@ void DrawOneCar( float bodyColor[3] )
     glPushMatrix();
     glTranslatef(CAR_LENGTH / 16 * 5, CAR_WIDTH * 3 / 8 + CAR_WIDTH / 16, CAR_HEIGHT / 4);
     glRotatef(90.0, 1.0, 0.0, 0.0);
-    glutSolidTorus(CAR_WIDTH / 16, CAR_LENGTH / 8, 10.0, 10.0);
+    glutSolidTorus(CAR_WIDTH / 16, CAR_LENGTH / 8, TORUS_SIDES, TORUS_RINGS);
     glPopMatrix();
 
     //left back wheel
     glPushMatrix();
     glTranslatef(-CAR_LENGTH / 16 * 5, CAR_WIDTH * 3 / 8 + CAR_WIDTH / 16, CAR_HEIGHT / 4);
     glRotatef(90.0, 1.0, 0.0, 0.0);
-    glutSolidTorus(CAR_WIDTH / 16, CAR_LENGTH / 8, 10.0, 10.0);
+    glutSolidTorus(CAR_WIDTH / 16, CAR_LENGTH / 8, TORUS_SIDES, TORUS_RINGS);
     glPopMatrix();
 
     //right front wheel
     glPushMatrix();
     glTranslatef(CAR_LENGTH / 16 * 5, -(CAR_WIDTH * 3 / 8 + CAR_WIDTH / 16), CAR_HEIGHT / 4);
     glRotatef(90.0, 1.0, 0.0, 0.0);
-    glutSolidTorus(CAR_WIDTH / 16, CAR_LENGTH / 8, 10.0, 10.0);
+    glutSolidTorus(CAR_WIDTH / 16, CAR_LENGTH / 8, TORUS_SIDES, TORUS_RINGS);
     glPopMatrix();
 
     //right back wheel
     glPushMatrix();
     glTranslatef(-CAR_LENGTH / 16 * 5, -(CAR_WIDTH * 3 / 8 + CAR_WIDTH / 16), CAR_HEIGHT / 4);
     glRotatef(90.0, 1.0, 0.0, 0.0);
-    glutSolidTorus(CAR_WIDTH / 16, CAR_LENGTH / 8, 10.0, 10.0);
+    glutSolidTorus(CAR_WIDTH / 16, CAR_LENGTH / 8, TORUS_SIDES, TORUS_RINGS);
     glPopMatrix();
 }
 
@@ -199,7 +201,13 @@ void DrawAllCars( void )
         //****************************
         glPushMatrix();
         glRotated(car[i].rotAngle, car[i].xzAxis[0], 0.0, car[i].xzAxis[1]);
-        glTranslated(PLANET_RADIUS * sin(car[i].angularPos * PI / 180), 0.0, PLANET_RADIUS * cos(car[i].angularPos * PI / 180));
+
+        glTranslated(
+            PLANET_RADIUS * sin(car[i].angularPos * PI / 180), 
+            0.0, 
+            PLANET_RADIUS * cos(car[i].angularPos * PI / 180)
+        );
+
         glRotated(car[i].angularPos, 0.0, 1.0, 0.0);
         DrawOneCar(car[i].bodyColor);
         glPopMatrix();
