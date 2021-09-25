@@ -2,7 +2,7 @@
 // STUDENT NAME: Yang Shiyuan
 // NUS User ID.: A0214269A
 // COMMENTS TO GRADER:
-//
+// Car size is calculated with the consideration of tyre width
 // ============================================================
 
 #include <stdlib.h>
