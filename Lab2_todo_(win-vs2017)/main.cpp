@@ -1,6 +1,6 @@
 //============================================================
-// STUDENT NAME:
-// NUS User ID.:
+// STUDENT NAME: Yang Shiyuan
+// NUS User ID.: A0214269A
 // COMMENTS TO GRADER:
 //
 // ============================================================
@@ -131,6 +131,20 @@ void DrawOneCar( float bodyColor[3] )
     //
     // Draw the car body.
     //****************************
+    
+    // Draw the bottom body
+    glPushMatrix();
+    glTranslated(0.0, 0.0, CAR_HEIGHT / 4);
+    glScaled(CAR_LENGTH, CAR_WIDTH * 3 / 4, CAR_HEIGHT / 2);
+    glutSolidCube(1.0);
+    glPopMatrix();
+
+    // Draw the top body
+    glPushMatrix();
+    glTranslated(-CAR_LENGTH / 8, 0.0, CAR_HEIGHT * 3 / 4);
+    glScaled(CAR_LENGTH / 2, CAR_WIDTH * 3 / 4, CAR_HEIGHT / 2);
+    glutSolidCube(1.0);
+    glPopMatrix();
 
     glColor3fv(tyreColor);
 
@@ -139,6 +153,34 @@ void DrawOneCar( float bodyColor[3] )
     //
     // Draw the four tyres.
     //****************************
+
+    //left front wheel
+    glPushMatrix();
+    glTranslatef(CAR_LENGTH / 16 * 5, CAR_WIDTH * 3 / 8 + CAR_WIDTH / 16, CAR_HEIGHT / 4);
+    glRotatef(90.0, 1.0, 0.0, 0.0);
+    glutSolidTorus(CAR_WIDTH / 16, CAR_LENGTH / 8, 10.0, 10.0);
+    glPopMatrix();
+
+    //left back wheel
+    glPushMatrix();
+    glTranslatef(-CAR_LENGTH / 16 * 5, CAR_WIDTH * 3 / 8 + CAR_WIDTH / 16, CAR_HEIGHT / 4);
+    glRotatef(90.0, 1.0, 0.0, 0.0);
+    glutSolidTorus(CAR_WIDTH / 16, CAR_LENGTH / 8, 10.0, 10.0);
+    glPopMatrix();
+
+    //right front wheel
+    glPushMatrix();
+    glTranslatef(CAR_LENGTH / 16 * 5, -(CAR_WIDTH * 3 / 8 + CAR_WIDTH / 16), CAR_HEIGHT / 4);
+    glRotatef(90.0, 1.0, 0.0, 0.0);
+    glutSolidTorus(CAR_WIDTH / 16, CAR_LENGTH / 8, 10.0, 10.0);
+    glPopMatrix();
+
+    //right back wheel
+    glPushMatrix();
+    glTranslatef(-CAR_LENGTH / 16 * 5, -(CAR_WIDTH * 3 / 8 + CAR_WIDTH / 16), CAR_HEIGHT / 4);
+    glRotatef(90.0, 1.0, 0.0, 0.0);
+    glutSolidTorus(CAR_WIDTH / 16, CAR_LENGTH / 8, 10.0, 10.0);
+    glPopMatrix();
 }
 
 
@@ -149,11 +191,18 @@ void DrawOneCar( float bodyColor[3] )
 
 void DrawAllCars( void )
 {
+
     for ( int i = 0; i < NUM_CARS; i++ )
     {
         //****************************
         // WRITE YOUR CODE HERE.
         //****************************
+        glPushMatrix();
+        glRotated(car[i].rotAngle, car[i].xzAxis[0], 0.0, car[i].xzAxis[1]);
+        glTranslated(PLANET_RADIUS * sin(car[i].angularPos * PI / 180), 0.0, PLANET_RADIUS * cos(car[i].angularPos * PI / 180));
+        glRotated(car[i].angularPos, 0.0, 1.0, 0.0);
+        DrawOneCar(car[i].bodyColor);
+        glPopMatrix();
     }
 }
 
