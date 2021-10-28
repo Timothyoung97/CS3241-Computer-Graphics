@@ -1,6 +1,6 @@
 //============================================================
-// STUDENT NAME:
-// NUS User ID.:
+// STUDENT NAME: Yang Shiyuan
+// NUS User ID.: A0214269A / E0518553
 // COMMENTS TO GRADER:
 //
 // ============================================================
@@ -155,6 +155,46 @@ void MakeReflectionImage( void )
     //****************************
     // WRITE YOUR CODE HERE.
     //****************************
+    
+    float virtualEyePos[3];
+    virtualEyePos[0] = eyePos[0];
+    virtualEyePos[1] = eyePos[1];
+    virtualEyePos[2] = 2 * TABLETOP_Z - eyePos[2];
+
+    float virtualLookAt[3];
+    virtualLookAt[0] = eyePos[0];
+    virtualLookAt[1] = eyePos[1];
+    virtualLookAt[2] = eyePos[2];
+
+
+    // Step 1
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // Step 2
+    glLoadIdentity();
+    glMatrixMode(GL_PROJECTION);
+    glFrustum(
+        TABLETOP_Y1 - virtualEyePos[1],
+        TABLETOP_Y2 - virtualEyePos[1],
+        TABLETOP_X2 - virtualEyePos[0],
+        TABLETOP_X1 - virtualEyePos[0],
+        TABLETOP_Z - virtualEyePos[2],
+        TABLETOP_Z - virtualEyePos[2] + SCENE_RADIUS);
+
+    // Step 3
+    glLoadIdentity();
+    glMatrixMode(GL_MODELVIEW);
+    gluLookAt(virtualEyePos[0], virtualEyePos[1], virtualEyePos[2], virtualEyePos[0], virtualEyePos[1], eyePos[2], 1, 0, 0);
+
+    // Step 4
+    glLightfv(GL_LIGHT0, GL_POSITION, light0Position);
+    glLightfv(GL_LIGHT1, GL_POSITION, light1Position);
+    
+    // Step 5
+    DrawTeapot();
+    DrawSphere();
+
+    // Step 6
 
 
 }
@@ -526,7 +566,7 @@ void SetUpTextureMaps( void )
     //********************************************************
 
     //****************************
-    // WRITE YOUR CODE HERE.
+    // WRITE YOUR CODE HERE. Cut pasting
     //****************************
 
 
@@ -905,7 +945,7 @@ void DrawTable( void )
     //********************************************************
 
     //****************************
-    // WRITE YOUR CODE HERE.
+    // WRITE YOUR CODE HERE. Refer to how a table floor is drawn
     //****************************
 
 
