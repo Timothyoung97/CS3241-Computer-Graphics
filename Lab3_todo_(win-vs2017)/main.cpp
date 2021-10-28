@@ -934,20 +934,21 @@ void DrawTable( void )
     //********************************************************
     //*********** TASK #1: WRITE YOUR CODE BELOW *************
     //********************************************************
-    // Must use the SubdivideAndDrawQuad() function to draw the tabletop rectangle.
-    // So that the tabletop has small enough quads to show the sharp specular highlight.
+    // Must use the SubdivideAndDrawQuad() function to draw the tabletop rectangle. (checked)
+    // So that the tabletop has small enough quads to show the sharp specular highlight. (checked)
     //
-    // Correct texture coordinates must be provided at the vertices of the tabletop rectangle,
-    // so that the reflection tecture map is correctly mapped on it.
+    // Correct texture coordinates must be provided at the vertices of the tabletop rectangle, (checked)
+    // so that the reflection tecture map is correctly mapped on it. (checked)
     //
     // The reflection on the tabletop should not be 100% (it is not a perfect mirror),
-    // and the underlying diffuse color and lighting on the tabletop must still be visible.
+    // and the underlying diffuse color and lighting on the tabletop must still be visible. 
     //********************************************************
 
     //****************************
     // WRITE YOUR CODE HERE. Refer to how a table floor is drawn
     //****************************
-    glBindTexture(GL_TEXTURE_2D, checkerTexObj);
+    glBindTexture(GL_TEXTURE_2D, reflectionTexObj);
+    glNormal3f(0.0, 0.0, 1.0); // Normal vector.
     SubdivideAndDrawQuad(24, 24, 0.0, 0.0, TABLETOP_X1, TABLETOP_Y1, TABLETOP_Z,
         1.0, 0.0, TABLETOP_X1, TABLETOP_Y2, TABLETOP_Z,
         1.0, 1.0, TABLETOP_X2, TABLETOP_Y2, TABLETOP_Z,
