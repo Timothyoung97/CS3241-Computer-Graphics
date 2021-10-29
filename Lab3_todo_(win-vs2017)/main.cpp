@@ -161,18 +161,12 @@ void MakeReflectionImage( void )
     virtualEyePos[1] = eyePos[1];
     virtualEyePos[2] = 2 * TABLETOP_Z - eyePos[2];
 
-    float virtualLookAt[3];
-    virtualLookAt[0] = eyePos[0];
-    virtualLookAt[1] = eyePos[1];
-    virtualLookAt[2] = eyePos[2];
-
-
     // Step 1
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Step 2
-    glLoadIdentity();
     glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
     glFrustum(
         TABLETOP_Y1 - virtualEyePos[1],
         TABLETOP_Y2 - virtualEyePos[1],
@@ -182,8 +176,8 @@ void MakeReflectionImage( void )
         TABLETOP_Z - virtualEyePos[2] + SCENE_RADIUS);
 
     // Step 3
-    glLoadIdentity();
     glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
     gluLookAt(virtualEyePos[0], virtualEyePos[1], virtualEyePos[2], virtualEyePos[0], virtualEyePos[1], eyePos[2], 1, 0, 0);
 
     // Step 4
@@ -195,7 +189,11 @@ void MakeReflectionImage( void )
     DrawSphere();
 
     // Step 6
-
+    glReadBuffer(GL_BACK);
+    glBindTexture(GL_TEXTURE_2D, reflectionTexObj);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
+    glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 0, 0, winWidth, winHeight, 0);
 
 }
 
@@ -569,6 +567,12 @@ void SetUpTextureMaps( void )
     // WRITE YOUR CODE HERE. Cut pasting
     //****************************
 
+    glGenTextures(1, &reflectionTexObj);
+    glBindTexture(GL_TEXTURE_2D, reflectionTexObj);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
 }
 
@@ -949,10 +953,10 @@ void DrawTable( void )
     //****************************
     glBindTexture(GL_TEXTURE_2D, reflectionTexObj);
     glNormal3f(0.0, 0.0, 1.0); // Normal vector.
-    SubdivideAndDrawQuad(24, 24, 0.0, 0.0, TABLETOP_X1, TABLETOP_Y1, TABLETOP_Z,
-        1.0, 0.0, TABLETOP_X1, TABLETOP_Y2, TABLETOP_Z,
-        1.0, 1.0, TABLETOP_X2, TABLETOP_Y2, TABLETOP_Z,
-        0.0, 1.0, TABLETOP_X2, TABLETOP_Y1, TABLETOP_Z);
+    SubdivideAndDrawQuad(24, 24,    1.0, 0.0, TABLETOP_X2, TABLETOP_Y2, TABLETOP_Z,
+                                    1.0, 1.0, TABLETOP_X1, TABLETOP_Y2, TABLETOP_Z,
+                                    0.0, 1.0, TABLETOP_X1, TABLETOP_Y1, TABLETOP_Z,
+                                    0.0, 0.0, TABLETOP_X2, TABLETOP_Y1, TABLETOP_Z);
 
 
 
