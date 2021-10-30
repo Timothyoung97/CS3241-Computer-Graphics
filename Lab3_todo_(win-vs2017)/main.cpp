@@ -156,37 +156,39 @@ void MakeReflectionImage( void )
     // WRITE YOUR CODE HERE.
     //****************************
     
-    float virtualEyePos[3];
+    double virtualEyePos[3];
     virtualEyePos[0] = eyePos[0];
     virtualEyePos[1] = eyePos[1];
-    virtualEyePos[2] = 2 * TABLETOP_Z - eyePos[2];
+    virtualEyePos[2] = 2.0 * TABLETOP_Z - eyePos[2];
 
-    // Step 1
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    // Step 1 -> Clears colour buffer and depth buffer
+    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // Step 2
+    // Step 2 -> View volume: Have to keep it aligned to the table top surface
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glFrustum(
-        TABLETOP_Y1 - virtualEyePos[1],
-        TABLETOP_Y2 - virtualEyePos[1],
-        TABLETOP_X2 - virtualEyePos[0],
-        TABLETOP_X1 - virtualEyePos[0],
-        TABLETOP_Z - virtualEyePos[2],
-        TABLETOP_Z - virtualEyePos[2] + SCENE_RADIUS);
+        TABLETOP_Y1 - virtualEyePos[1], // left
+        TABLETOP_Y2 - virtualEyePos[1], // right
+        TABLETOP_X1 - virtualEyePos[0], // bottom
+        TABLETOP_X2 - virtualEyePos[0], // top
+        TABLETOP_Z - virtualEyePos[2], // near
+        TABLETOP_Z - virtualEyePos[2] + SCENE_RADIUS); // far
 
     // Step 3
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    gluLookAt(virtualEyePos[0], virtualEyePos[1], virtualEyePos[2], virtualEyePos[0], virtualEyePos[1], eyePos[2], 1, 0, 0);
+    gluLookAt(virtualEyePos[0], virtualEyePos[1], virtualEyePos[2], eyePos[0], eyePos[1], eyePos[2], 1, 0, 0);
 
     // Step 4
     glLightfv(GL_LIGHT0, GL_POSITION, light0Position);
     glLightfv(GL_LIGHT1, GL_POSITION, light1Position);
     
     // Step 5
+    DrawRoom();
     DrawTeapot();
     DrawSphere();
+
 
     // Step 6
     glReadBuffer(GL_BACK);
@@ -566,7 +568,6 @@ void SetUpTextureMaps( void )
     //****************************
     // WRITE YOUR CODE HERE. Cut pasting
     //****************************
-
     glGenTextures(1, &reflectionTexObj);
     glBindTexture(GL_TEXTURE_2D, reflectionTexObj);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -951,12 +952,13 @@ void DrawTable( void )
     //****************************
     // WRITE YOUR CODE HERE. Refer to how a table floor is drawn
     //****************************
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
     glBindTexture(GL_TEXTURE_2D, reflectionTexObj);
     glNormal3f(0.0, 0.0, 1.0); // Normal vector.
-    SubdivideAndDrawQuad(24, 24,    1.0, 0.0, TABLETOP_X2, TABLETOP_Y2, TABLETOP_Z,
-                                    1.0, 1.0, TABLETOP_X1, TABLETOP_Y2, TABLETOP_Z,
-                                    0.0, 1.0, TABLETOP_X1, TABLETOP_Y1, TABLETOP_Z,
-                                    0.0, 0.0, TABLETOP_X2, TABLETOP_Y1, TABLETOP_Z);
+    SubdivideAndDrawQuad(24, 24,    0.0, 0.0, TABLETOP_X1, TABLETOP_Y1, TABLETOP_Z,
+                                    0.0, 1.0, TABLETOP_X2, TABLETOP_Y1, TABLETOP_Z,
+                                    1.0, 1.0, TABLETOP_X2, TABLETOP_Y2, TABLETOP_Z,
+                                    1.0, 0.0, TABLETOP_X1, TABLETOP_Y2, TABLETOP_Z);
 
 
 
