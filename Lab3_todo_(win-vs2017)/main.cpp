@@ -156,15 +156,16 @@ void MakeReflectionImage( void )
     // WRITE YOUR CODE HERE.
     //****************************
     
+    // Step 0
     double virtualEyePos[3];
     virtualEyePos[0] = eyePos[0];
     virtualEyePos[1] = eyePos[1];
     virtualEyePos[2] = 2.0 * TABLETOP_Z - eyePos[2];
 
-    // Step 1 -> Clears colour buffer and depth buffer
+    // Step 1
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // Step 2 -> View volume: Have to keep it aligned to the table top surface
+    // Step 2
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glFrustum(
@@ -189,11 +190,9 @@ void MakeReflectionImage( void )
     DrawTeapot();
     DrawSphere();
 
-
     // Step 6
     glReadBuffer(GL_BACK);
     glBindTexture(GL_TEXTURE_2D, reflectionTexObj);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
     glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 0, 0, winWidth, winHeight, 0);
 
@@ -566,15 +565,10 @@ void SetUpTextureMaps( void )
     //********************************************************
 
     //****************************
-    // WRITE YOUR CODE HERE. Cut pasting
+    // WRITE YOUR CODE HERE.
     //****************************
     glGenTextures(1, &reflectionTexObj);
     glBindTexture(GL_TEXTURE_2D, reflectionTexObj);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-
 }
 
 
@@ -950,9 +944,8 @@ void DrawTable( void )
     //********************************************************
 
     //****************************
-    // WRITE YOUR CODE HERE. Refer to how a table floor is drawn
+    // WRITE YOUR CODE HERE.
     //****************************
-    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
     glBindTexture(GL_TEXTURE_2D, reflectionTexObj);
     glNormal3f(0.0, 0.0, 1.0); // Normal vector.
     SubdivideAndDrawQuad(24, 24,    0.0, 0.0, TABLETOP_X1, TABLETOP_Y1, TABLETOP_Z,
