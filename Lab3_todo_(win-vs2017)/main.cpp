@@ -1252,9 +1252,9 @@ void DrawDiamond2(GLuint front, GLuint back)
 
 void DrawFinal(void)
 {
-    glTranslated(0.0, 0.0, 2.5);
+    glTranslated(0.0, 0.0, SCENE_RADIUS / 2.5);
     glRotated(90.0, 1.0, 1.0, 0.0);
-    glScaled(0.2, 0.2, 0.2);
+    glScaled(SCENE_RADIUS/30.0, SCENE_RADIUS/30.0, SCENE_RADIUS / 30.0);
     DrawDiamond2(starFoxTex1Obj, starFoxTex1Obj);
     glPushMatrix();
         glTranslated(0.50, 0.50, 0.55);
