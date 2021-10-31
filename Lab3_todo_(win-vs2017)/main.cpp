@@ -81,6 +81,8 @@ const char ceilingTexFile[] = "images/ceiling.jpg";
 const char brickTexFile[] = "images/brick.jpg";
 const char checkerTexFile[] = "images/checker.png";
 const char spotsTexFile[] = "images/spots.png";
+
+// My texture image filenames.
 const char starFoxTex1File[] = "images/sft1.png";
 const char starFoxTex2File[] = "images/sft2.png";
 const char starFoxTex3File[] = "images/sft3.png";
@@ -117,6 +119,8 @@ GLuint ceilingTexObj;
 GLuint brickTexObj;
 GLuint checkerTexObj;
 GLuint spotsTexObj;
+
+// My texture object
 GLuint starFoxTex1Obj;
 GLuint starFoxTex2Obj;
 GLuint starFoxTex3Obj;
@@ -133,6 +137,8 @@ void DrawRoom( void );
 void DrawTeapot( void );
 void DrawSphere( void );
 void DrawTable( void );
+
+// My forward function declarations.
 void DrawTriangle2D(GLuint textObj);
 void DrawTriangle3D(GLuint baseTexObj, GLuint triTexObj);
 void DrawSquare2D(GLuint texObj);
@@ -201,11 +207,15 @@ void MakeReflectionImage( void )
     DrawRoom();
     DrawTeapot();
     DrawSphere();
+
+    // Step 5a: Draw my own model
     DrawFinal();
 
     // Step 6
     glReadBuffer(GL_BACK);
     glBindTexture(GL_TEXTURE_2D, reflectionTexObj);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
     glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 0, 0, winWidth, winHeight, 0);
 
@@ -255,6 +265,8 @@ void MyDisplay( void )
     DrawTeapot();
     DrawSphere();
     DrawTable();
+
+    //  Draw my own model
     DrawFinal();
 
     glutSwapBuffers();
@@ -583,6 +595,8 @@ void SetUpTextureMaps( void )
     //****************************
     glGenTextures(1, &reflectionTexObj);
     glBindTexture(GL_TEXTURE_2D, reflectionTexObj);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
     // This texture object is for the star fox texture 1 map.
 
@@ -1132,15 +1146,16 @@ void DrawTriangle2D(GLuint texObj)
     GLfloat matAmbient[] = { 0.8, 0.8, 0.8, 1.0 };
     GLfloat matDiffuse[] = { 0.8, 0.8, 0.8, 1.0 };
     GLfloat matSpecular[] = { 1.0, 1.0, 1.0, 1.0 };
-    GLfloat matShininess[] = { 255.0 };
+    GLfloat matShininess[] = { 128.0 };
     glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, matAmbient);
     glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, matDiffuse);
     glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, matSpecular);
     glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, matShininess);
 
-    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
 
     glBindTexture(GL_TEXTURE_2D, texObj);
+    glNormal3f(0.0, 0.0, 1.0);
     glBegin(GL_TRIANGLES);
     glTexCoord2f(1.0, 0.0);    glVertex2f(-1.0, -1.0);
     glTexCoord2f(0.0, 0.0);    glVertex2f(1.0, -1.0);
@@ -1161,8 +1176,9 @@ void DrawSquare2D(GLuint texObj)
     glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, matSpecular);
     glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, matShininess);
 
-    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
     glBindTexture(GL_TEXTURE_2D, texObj);
+    glNormal3f(0.0, 0.0, 1.0);
     glBegin(GL_POLYGON);
     glTexCoord2f(1.0, 0.0);    glVertex2f(1.0, 0.0);
     glTexCoord2f(1.0, 1.0);    glVertex2f(1.0, 1.0);
@@ -1176,6 +1192,7 @@ void DrawTriangle3D(GLuint baseTexObj, GLuint triTexObj)
     // for the base
     glRotated(180.0, 1.0, 0.0, 0.0);
     glTranslated(-0.5, -0.5, 0.0);
+    glNormal3f(0.0, 0.0, 1.0);
     DrawSquare2D(baseTexObj);
 
     // for the triangle surface
@@ -1195,19 +1212,19 @@ void DrawTriangle3D(GLuint baseTexObj, GLuint triTexObj)
     glPopMatrix();
 
     glPushMatrix();
-    glTranslated(0.50, 0.25, -0.97);
-    glRotated(180.0, 0.0, 0.0, 1.0);
-    glRotated(-104.5, 1.0, 0.0, 0.0);
-    glScaled(0.5, 1.0, 1.0);
-    DrawTriangle2D(triTexObj);
+        glTranslated(0.50, 0.25, -0.97);
+        glRotated(180.0, 0.0, 0.0, 1.0);
+        glRotated(-104.5, 1.0, 0.0, 0.0);
+        glScaled(0.5, 1.0, 1.0);
+        DrawTriangle2D(triTexObj);
     glPopMatrix();
 
     glPushMatrix();
-    glTranslated(0.75, 0.50, -0.97);
-    glRotated(-90.0, 0.0, 0.0, 1.0);
-    glRotated(-104.5, 1.0, 0.0, 0.0);
-    glScaled(0.5, 1.0, 1.0);
-    DrawTriangle2D(triTexObj);
+        glTranslated(0.75, 0.50, -0.97);
+        glRotated(-90.0, 0.0, 0.0, 1.0);
+        glRotated(-104.5, 1.0, 0.0, 0.0);
+        glScaled(0.5, 1.0, 1.0);
+        DrawTriangle2D(triTexObj);
     glPopMatrix();
 }
 
@@ -1235,9 +1252,9 @@ void DrawDiamond2(GLuint front, GLuint back)
 
 void DrawFinal(void)
 {
-    glTranslated(0.0, 0.0, 2.0);
+    glTranslated(0.0, 0.0, 2.5);
     glRotated(90.0, 1.0, 1.0, 0.0);
-    glScaled(0.1, 0.1, 0.1);
+    glScaled(0.2, 0.2, 0.2);
     DrawDiamond2(starFoxTex1Obj, starFoxTex1Obj);
     glPushMatrix();
         glTranslated(0.50, 0.50, 0.55);
