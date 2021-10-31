@@ -2,7 +2,8 @@
 // STUDENT NAME: Yang Shiyuan
 // NUS User ID.: A0214269A / E0518553
 // COMMENTS TO GRADER:
-//
+// I gave up drawing star fox fighter jet... cuz I need to rush for CS2106 Lab & CS2103 tP
+// so the replacement is a spike star... :)
 // ============================================================
 
 #include <stdlib.h>
@@ -80,6 +81,9 @@ const char ceilingTexFile[] = "images/ceiling.jpg";
 const char brickTexFile[] = "images/brick.jpg";
 const char checkerTexFile[] = "images/checker.png";
 const char spotsTexFile[] = "images/spots.png";
+const char starFoxTex1File[] = "images/sft1.png";
+const char starFoxTex2File[] = "images/sft2.png";
+const char starFoxTex3File[] = "images/sft3.png";
 
 
 
@@ -113,6 +117,9 @@ GLuint ceilingTexObj;
 GLuint brickTexObj;
 GLuint checkerTexObj;
 GLuint spotsTexObj;
+GLuint starFoxTex1Obj;
+GLuint starFoxTex2Obj;
+GLuint starFoxTex3Obj;
 
 // Others.
 bool drawAxes = true;           // Draw world coordinate frame axes iff true.
@@ -126,7 +133,12 @@ void DrawRoom( void );
 void DrawTeapot( void );
 void DrawSphere( void );
 void DrawTable( void );
-
+void DrawTriangle2D(GLuint textObj);
+void DrawTriangle3D(GLuint baseTexObj, GLuint triTexObj);
+void DrawSquare2D(GLuint texObj);
+void DrawDiamond(GLuint front, GLuint back);
+void DrawDiamond2(GLuint front, GLuint back);
+void DrawFinal(void);
 
 
 
@@ -189,6 +201,7 @@ void MakeReflectionImage( void )
     DrawRoom();
     DrawTeapot();
     DrawSphere();
+    DrawFinal();
 
     // Step 6
     glReadBuffer(GL_BACK);
@@ -242,6 +255,7 @@ void MyDisplay( void )
     DrawTeapot();
     DrawSphere();
     DrawTable();
+    DrawFinal();
 
     glutSwapBuffers();
 }
@@ -569,6 +583,72 @@ void SetUpTextureMaps( void )
     //****************************
     glGenTextures(1, &reflectionTexObj);
     glBindTexture(GL_TEXTURE_2D, reflectionTexObj);
+
+    // This texture object is for the star fox texture 1 map.
+
+    glGenTextures(1, &starFoxTex1Obj);
+    glBindTexture(GL_TEXTURE_2D, starFoxTex1Obj);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+
+    if (ReadImageFile(starFoxTex1File, &imageData,
+        &imageWidth, &imageHeight, &numComponents) == 0) exit(1);
+    if (numComponents != 3)
+    {
+        fprintf(stderr, "Error: Texture image is not in RGB format.\n");
+        exit(1);
+    }
+
+    gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGB, imageWidth, imageHeight,
+        GL_RGB, GL_UNSIGNED_BYTE, imageData);
+
+    DeallocateImageData(&imageData);
+
+    // This texture object is for the star fox texture 2 map.
+
+    glGenTextures(1, &starFoxTex2Obj);
+    glBindTexture(GL_TEXTURE_2D, starFoxTex2Obj);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+
+    if (ReadImageFile(starFoxTex2File, &imageData,
+        &imageWidth, &imageHeight, &numComponents) == 0) exit(1);
+    if (numComponents != 3)
+    {
+        fprintf(stderr, "Error: Texture image is not in RGB format.\n");
+        exit(1);
+    }
+
+    gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGB, imageWidth, imageHeight,
+        GL_RGB, GL_UNSIGNED_BYTE, imageData);
+
+    DeallocateImageData(&imageData);
+    
+    // This texture object is for the star fox texture 3 map.
+
+    glGenTextures(1, &starFoxTex3Obj);
+    glBindTexture(GL_TEXTURE_2D, starFoxTex3Obj);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+
+    if (ReadImageFile(starFoxTex3File, &imageData,
+        &imageWidth, &imageHeight, &numComponents) == 0) exit(1);
+    if (numComponents != 3)
+    {
+        fprintf(stderr, "Error: Texture image is not in RGB format.\n");
+        exit(1);
+    }
+
+    gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGB, imageWidth, imageHeight,
+        GL_RGB, GL_UNSIGNED_BYTE, imageData);
+
+    DeallocateImageData(&imageData);
 }
 
 
@@ -1038,5 +1118,135 @@ void DrawTable( void )
     glScaled( TABLE_THICKNESS, TABLE_THICKNESS, TABLETOP_Z - TABLE_THICKNESS );
     glTranslated( 0.0, 0.0, 0.5 );
     glutSolidCube( 1.0 );
+    glPopMatrix();
+}
+
+/////////////////////////////////////////////////////////////////////////////
+// Draw a texture-mapped Star Fox Fighter Jet
+/////////////////////////////////////////////////////////////////////////////
+
+void DrawTriangle2D(GLuint texObj)
+{
+    double size = 0.45;
+
+    GLfloat matAmbient[] = { 0.8, 0.8, 0.8, 1.0 };
+    GLfloat matDiffuse[] = { 0.8, 0.8, 0.8, 1.0 };
+    GLfloat matSpecular[] = { 1.0, 1.0, 1.0, 1.0 };
+    GLfloat matShininess[] = { 255.0 };
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, matAmbient);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, matDiffuse);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, matSpecular);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, matShininess);
+
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
+    glBindTexture(GL_TEXTURE_2D, texObj);
+    glBegin(GL_TRIANGLES);
+    glTexCoord2f(1.0, 0.0);    glVertex2f(-1.0, -1.0);
+    glTexCoord2f(0.0, 0.0);    glVertex2f(1.0, -1.0);
+    glTexCoord2f(0.5, 1.0);    glVertex2f(0.0, 1.0);
+    glEnd();
+}
+
+void DrawSquare2D(GLuint texObj)
+{
+    double size = 0.45;
+
+    GLfloat matAmbient[] = { 0.8, 0.8, 0.8, 1.0 };
+    GLfloat matDiffuse[] = { 0.8, 0.8, 0.8, 1.0 };
+    GLfloat matSpecular[] = { 1.0, 1.0, 1.0, 1.0 };
+    GLfloat matShininess[] = { 128.0 };
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, matAmbient);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, matDiffuse);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, matSpecular);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, matShininess);
+
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+    glBindTexture(GL_TEXTURE_2D, texObj);
+    glBegin(GL_POLYGON);
+    glTexCoord2f(1.0, 0.0);    glVertex2f(1.0, 0.0);
+    glTexCoord2f(1.0, 1.0);    glVertex2f(1.0, 1.0);
+    glTexCoord2f(0.0, 1.0);    glVertex2f(0.0, 1.0);
+    glTexCoord2f(0.0, 0.0);    glVertex2f(0.0, 0.0);
+    glEnd();
+}
+
+void DrawTriangle3D(GLuint baseTexObj, GLuint triTexObj)
+{
+    // for the base
+    glRotated(180.0, 1.0, 0.0, 0.0);
+    glTranslated(-0.5, -0.5, 0.0);
+    DrawSquare2D(baseTexObj);
+
+    // for the triangle surface
+    glPushMatrix();
+        glTranslated(0.50, 0.75, -0.97);
+        glRotated(-104.5, 1.0, 0.0, 0.0);
+        glScaled(0.5, 1.0, 1.0);
+        DrawTriangle2D(triTexObj);
+    glPopMatrix();
+
+    glPushMatrix();
+        glTranslated(0.25, 0.50, -0.97);
+        glRotated(90.0, 0.0, 0.0, 1.0);
+        glRotated(-104.5, 1.0, 0.0, 0.0);        
+        glScaled(0.5, 1.0, 1.0);
+        DrawTriangle2D(triTexObj);
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslated(0.50, 0.25, -0.97);
+    glRotated(180.0, 0.0, 0.0, 1.0);
+    glRotated(-104.5, 1.0, 0.0, 0.0);
+    glScaled(0.5, 1.0, 1.0);
+    DrawTriangle2D(triTexObj);
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslated(0.75, 0.50, -0.97);
+    glRotated(-90.0, 0.0, 0.0, 1.0);
+    glRotated(-104.5, 1.0, 0.0, 0.0);
+    glScaled(0.5, 1.0, 1.0);
+    DrawTriangle2D(triTexObj);
+    glPopMatrix();
+}
+
+void DrawDiamond(GLuint front, GLuint back)
+{
+    DrawTriangle3D(front, front);
+    glPushMatrix();
+        glTranslated(0.50, 0.50, 0.0);
+        glRotated(180, 0.0, 0.0, 1.0);
+        glScaled(1.0, 1.0, 0.3);
+        DrawTriangle3D(back, back);
+    glPopMatrix();
+}
+
+void DrawDiamond2(GLuint front, GLuint back)
+{
+    glTranslated(0.0, 0.0, 0.55);
+    DrawDiamond(front, front);
+    glPushMatrix();
+        glTranslated(0.50, 0.50, 1.1);
+        glRotated(90.0, 0.0, 0.0, 1.0);
+        DrawDiamond(back, back);
+    glPopMatrix();
+}
+
+void DrawFinal(void)
+{
+    glTranslated(0.0, 0.0, 2.0);
+    glRotated(90.0, 1.0, 1.0, 0.0);
+    glScaled(0.1, 0.1, 0.1);
+    DrawDiamond2(starFoxTex1Obj, starFoxTex1Obj);
+    glPushMatrix();
+        glTranslated(0.50, 0.50, 0.55);
+        glRotated(90.0, 1.0, 0.0, 0.0);
+        DrawDiamond2(starFoxTex3Obj, starFoxTex3Obj);
+    glPopMatrix();
+    glPushMatrix();
+        glTranslated(0.50, 0.50, 0.55);
+        glRotated(90.0, 0.0, 1.0, 0.0);
+        DrawDiamond2(starFoxTex2Obj, starFoxTex2Obj);
     glPopMatrix();
 }
