@@ -68,29 +68,30 @@ bool Triangle::shadowHit( const Ray &r, double tmin, double tmax ) const
 
 bool Triangle::hit( const Ray &r, double tmin, double tmax, SurfaceHitRecord &rec ) const 
 {
-    double A = v0.x() - v1.x();
-    double B = v0.y() - v1.y();
-    double C = v0.z() - v1.z();
+    double A = v0.x() - v1.x(); // Ax - Bx
+    double B = v0.y() - v1.y(); // Ay - By
+    double C = v0.z() - v1.z(); // Az - Bz
 
-    double D = v0.x() - v2.x();
-    double E = v0.y() - v2.y();
-    double F = v0.z() - v2.z();
+    double D = v0.x() - v2.x(); // Ax - Cx
+    double E = v0.y() - v2.y(); // Ay - Cy
+    double F = v0.z() - v2.z(); // Az - Cz
 
-    double G = r.direction().x();
-    double H = r.direction().y();
-    double I = r.direction().z();
+    double G = r.direction().x(); // Rdx
+    double H = r.direction().y(); // Rdy
+    double I = r.direction().z(); // Rdz
+    
+    double J = v0.x() - r.origin().x(); // Ax - Rox
+    double K = v0.y() - r.origin().y(); // Ay - Roy
+    double L = v0.z() - r.origin().z(); // Az - Roz
 
-    double J = v0.x() - r.origin().x();
-    double K = v0.y() - r.origin().y();
-    double L = v0.z() - r.origin().z();
-
+    // Calculation of Determinant
     double EIHF = E*I - H*F;
     double GFDI = G*F - D*I;
     double DHEG = D*H - E*G;
 
     double denom = (A*EIHF + B*GFDI + C*DHEG);
 
-    double beta = (J*EIHF + K*GFDI + L*DHEG) / denom;
+    double beta = (J*EIHF + K*GFDI + L*DHEG) / denom; 
 
     if ( beta < 0.0 || beta > 1.0 ) return false;
 
