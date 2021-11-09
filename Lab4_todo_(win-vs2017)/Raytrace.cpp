@@ -133,7 +133,7 @@ Color Raytrace::TraceRay( const Ray &ray, const Scene &scene,
             int surfaceNo = 0;
             for (const auto& surface : scene.surfaces)
             {
-                if (surfaceNo < 3)
+                if (surfaceNo < 3) // ignore the 3 planes
                 {
                     surfaceNo++;
                     continue;
@@ -178,7 +178,7 @@ Color Raytrace::TraceRay( const Ray &ray, const Scene &scene,
 
     if (reflectLevels == 0) 
     {
-        return result;
+        return result.clamp();
     } 
 
     Color Krg = nearestHitRec.material.k_rg;
