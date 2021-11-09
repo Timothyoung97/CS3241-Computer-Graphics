@@ -105,10 +105,11 @@ Color Raytrace::TraceRay( const Ray &ray, const Scene &scene,
 
 
     //**********************************
-    result = nearestHitRec.material.k_d;  // REMOVE THIS LINE AFTER YOU HAVE FINISHED CODE BELOW.
+    //result = nearestHitRec.material.k_d;  // REMOVE THIS LINE AFTER YOU HAVE FINISHED CODE BELOW.
     //**********************************
 
 
+// This is to calculate the extremely long term of the Ilocal
 // Add to result the phong lighting contributed by each point light source.
 // Compute for shadow if hasShadow is true.
 
@@ -116,22 +117,72 @@ Color Raytrace::TraceRay( const Ray &ray, const Scene &scene,
     //*********** WRITE YOUR CODE HERE **************
     //***********************************************
 
+    Color SumPhongTerm(0.0f, 0.0f, 0.0f);
 
+    for (const auto& ptLight : scene.ptLights) 
+    {
+        Vector3d unit_L = (ptLight.position - nearestHitRec.p).unitVector();
 
+        Color phongLightResult = computePhongLighting(unit_L, N, V, nearestHitRec.material, ptLight);
+        
+        if (hasShadow)
+        {   
+            Ray shadowFeeler(nearestHitRec.p, unit_L);
+            bool isBlocked = false;
+            Color kShadow(1.0f, 1.0f, 1.0f);
+            int surfaceNo = 0;
+            for (const auto& surface : scene.surfaces)
+            {
+                if (surfaceNo < 3)
+                {
+                    surfaceNo++;
+                    continue;
+                }
+
+                isBlocked = surface->shadowHit(shadowFeeler, DEFAULT_TMIN, DEFAULT_TMAX);
+                if (isBlocked)
+                {
+                    kShadow.setR(0.0f);
+                    kShadow.setG(0.0f);
+                    kShadow.setB(0.0f);
+                    break;
+                }
+            }
+
+            phongLightResult *= kShadow;
+        }
+        
+        SumPhongTerm += phongLightResult;
+    }
+    result += SumPhongTerm;
+
+// This is refering to the calcualtion of Ia * ka -> Local Stuff
 // Add to result the global ambient lighting.
 
     //***********************************************
     //*********** WRITE YOUR CODE HERE **************
     //***********************************************
+    Color Ia = scene.amLight.I_a;
+    Color Ka = nearestHitRec.material.k_a;
+    Color IaxKa = Ia*Ka;
+
+    result += IaxKa;
 
 
-
+// This is refering to the calculation of Krg * Ireflected
 // Add to result the reflection of the scene.
 
     //***********************************************
     //*********** WRITE YOUR CODE HERE **************
     //***********************************************
 
+    if (reflectLevels == 0) 
+    {
+        return result;
+    } 
 
-    return result;
+    Color Krg = nearestHitRec.material.k_rg;
+    Vector3d R = mirrorReflect(V, N);
+    Ray reflectRay(nearestHitRec.p , R);
+    return result += Krg * TraceRay(reflectRay, scene, reflectLevels-1, hasShadow);
 }

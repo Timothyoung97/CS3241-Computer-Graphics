@@ -24,7 +24,7 @@ bool Sphere::hit( const Ray &r, double tmin, double tmax, SurfaceHitRecord &rec 
 
     Vector3d Ro_new = r.origin() - localCenter;
     Vector3d Rd = r.direction();
-    Vector3d unit_Rd = Rd.makeUnitVector();
+    Vector3d unit_Rd = Rd.unitVector();
 
     double a = dot(unit_Rd, unit_Rd);
 
@@ -35,7 +35,7 @@ bool Sphere::hit( const Ray &r, double tmin, double tmax, SurfaceHitRecord &rec 
 
     double d = pow(b, 2.0) - 4 * a * c;
 
-    if (d < 0) 
+    if (d < 0 ) 
     {
         //printf("This ray does not touch the surface\n");
         return false;
@@ -58,7 +58,7 @@ bool Sphere::hit( const Ray &r, double tmin, double tmax, SurfaceHitRecord &rec 
     }
 
     Vector3d intersect_point = Ro_new + unit_Rd * final_t;
-    Vector3d intersect_normal = (intersect_point - localCenter).makeUnitVector();
+    Vector3d intersect_normal = (intersect_point).unitVector();
 
     if (final_t >= tmin && final_t <= tmax)
     {
